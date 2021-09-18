@@ -16,6 +16,7 @@ import re
 contenidoGlobal=[]
 listaTokens=[]
 listaErrores=[]
+listaImagenes=[]
 def crearVentanaMenu():
     #Crear la ventana
     ventanaMenu = tkinter.Tk()
@@ -78,6 +79,7 @@ def bAnalizarArchivo():
                 columna+=1
             elif caracterLeido == '\n':
                 fila +=1
+                columna=1
             if re.search('[A-Z]', caracterLeido):
                 buffer+=caracterLeido
                 columna+=1
@@ -86,7 +88,6 @@ def bAnalizarArchivo():
                     listaTokens.append(Token('titulo',buffer, fila, columna))
                     buffer=''
                     i-=1
-                    print("se encontro titulo")
                     estado  = 1
                 elif buffer == 'ANCHO':
                     listaTokens.append(Token('ancho',buffer, fila, columna))
@@ -118,19 +119,28 @@ def bAnalizarArchivo():
                     buffer=''
                     i-=1
                     estado  = 1
-                    print("se encontro filtros")
+                else:
+                    buffer = caracterLeido
+                    mandarAError(buffer, fila, columna)
+                    buffer=''
+
                 
         elif estado ==1:
             if caracterLeido == '\s' or caracterLeido == '\t' :
                 columna+=1
             elif caracterLeido == '\n':
                 fila +=1
+                columna =1
             elif caracterLeido == '=':
                 buffer += caracterLeido
                 listaTokens.append(Token('igual', buffer,fila,columna))
                 columna+=1
                 buffer=''
                 estado = 2
+            else:
+                    buffer = caracterLeido
+                    mandarAError(buffer, fila, columna)
+                    buffer=''
 
 
         elif estado ==2:
@@ -138,6 +148,7 @@ def bAnalizarArchivo():
                 columna+=1
             elif caracterLeido == '\n':
                 fila +=1
+                columna =1
             elif caracterLeido == '"':
                 buffer+=caracterLeido
                 columna+=1
@@ -171,16 +182,20 @@ def bAnalizarArchivo():
                     buffer=''
                     i-=1
                     estado  = 21
+                else:
+                    buffer = caracterLeido
+                    mandarAError(buffer, fila, columna)
+                    buffer=''
 
 
             
         elif estado ==3:
             if caracterLeido == '"':
-                    buffer += caracterLeido
-                    listaTokens.append(Token('cadena',buffer, fila, columna))
-                    buffer = ''
-                    columna += 1
-                    estado=4
+                buffer += caracterLeido
+                listaTokens.append(Token('cadena',buffer, fila, columna))
+                buffer = ''
+                columna += 1
+                estado=4
             else:
                 buffer +=caracterLeido
                 columna+=1
@@ -190,18 +205,24 @@ def bAnalizarArchivo():
                 columna+=1
             elif caracterLeido == '\n':
                 fila +=1
+                columna =1
             elif caracterLeido == ';':
                 buffer += caracterLeido
                 listaTokens.append(Token('puntocoma',buffer, fila, columna))
                 buffer = ''
                 columna += 1
                 estado=5
+            else:
+                buffer = caracterLeido
+                mandarAError(buffer, fila, columna)
+                buffer=''
 
         elif estado ==5:
             if caracterLeido == '\s' or caracterLeido == '\t' :
                 columna+=1
             elif caracterLeido == '\n':
                 fila +=1
+                columna =1
             elif caracterLeido == '@':
                 buffer +=caracterLeido
                 if buffer == '@@@@':
@@ -227,28 +248,42 @@ def bAnalizarArchivo():
                 buffer = ''
                 columna += 1
                 estado=5
+            else:
+                buffer = caracterLeido
+                mandarAError(buffer, fila, columna)
+                buffer=''
 
         elif estado ==7:
             if caracterLeido == '\s' or caracterLeido == '\t' :
                 columna+=1
             elif caracterLeido == '\n':
                 fila +=1
+                columna =1
             elif caracterLeido == '[':
                 buffer += caracterLeido
                 listaTokens.append(Token('CorcheteAbierto', buffer, fila, columna))
                 buffer =''
                 columna +=1
                 estado = 8
+            else:
+                buffer = caracterLeido
+                mandarAError(buffer, fila, columna)
+                buffer=''
             
         elif estado ==8:
             if caracterLeido == '\s' or caracterLeido == '\t' :
                 columna+=1
             elif caracterLeido == '\n':
                 fila +=1
+                columna =1
             elif re.search('[0-9]',caracterLeido):
                 buffer +=caracterLeido
                 columna +=1
                 estado = 9
+            else:
+                buffer = caracterLeido
+                mandarAError(buffer, fila, columna)
+                buffer=''
 
         elif estado ==9:
             if re.search('[0-9]',caracterLeido):
@@ -264,6 +299,7 @@ def bAnalizarArchivo():
                 columna+=1
             elif caracterLeido == '\n':
                 fila +=1
+                columna =1
             elif caracterLeido == ',':
                 listaTokens.append(Token('entero', buffer, fila, columna))
                 buffer = ''
@@ -272,6 +308,10 @@ def bAnalizarArchivo():
                 buffer = ''
                 columna+=1
                 estado = 11
+            else:
+                buffer = caracterLeido
+                mandarAError(buffer, fila, columna)
+                buffer=''
             
             
         elif estado ==10:
@@ -283,16 +323,25 @@ def bAnalizarArchivo():
                 buffer = ''
                 columna+=1
                 estado = 11
+            else:
+                buffer = caracterLeido
+                mandarAError(buffer, fila, columna)
+                buffer=''
                  
         elif estado == 11:
             if caracterLeido == '\s' or caracterLeido == '\t' :
                 columna+=1
             elif caracterLeido == '\n':
                 fila +=1
+                columna =1
             elif re.search('[0-9]',caracterLeido):
                 buffer +=caracterLeido
                 columna +=1
                 estado = 12
+            else:
+                    buffer = caracterLeido
+                    mandarAError(buffer, fila, columna)
+                    buffer=''
 
 
         elif estado == 12:
@@ -309,6 +358,7 @@ def bAnalizarArchivo():
                 columna+=1
             elif caracterLeido == '\n':
                 fila +=1
+                columna =1
             elif caracterLeido == ',':
                 listaTokens.append(Token('entero', buffer, fila, columna))
                 buffer =''
@@ -317,6 +367,10 @@ def bAnalizarArchivo():
                 buffer = ''
                 columna+=1
                 estado = 14
+            else:
+                    buffer = caracterLeido
+                    mandarAError(buffer, fila, columna)
+                    buffer=''
 
         elif estado ==13:
             if re.search('\s', caracterLeido):
@@ -327,12 +381,17 @@ def bAnalizarArchivo():
                 buffer = ''
                 columna+=1
                 estado = 14
+            else:
+                    buffer = caracterLeido
+                    mandarAError(buffer, fila, columna)
+                    buffer=''
 
         elif estado == 14:
             if caracterLeido == '\s' or caracterLeido == '\t' :
                 columna+=1
             elif caracterLeido == '\n':
                 fila +=1
+                columna =1
             if re.search('[A-Z]', caracterLeido):
                 buffer+=caracterLeido
                 columna+=1
@@ -342,6 +401,10 @@ def bAnalizarArchivo():
                     buffer=''
                     i-=1
                     estado  = 15
+                else:
+                    buffer = caracterLeido
+                    mandarAError(buffer, fila, columna)
+                    buffer=''
             
 
         elif estado ==15:
@@ -353,6 +416,10 @@ def bAnalizarArchivo():
                 buffer = ''
                 columna+=1
                 estado = 16
+            else:
+                    buffer = caracterLeido
+                    mandarAError(buffer, fila, columna)
+                    buffer=''
         
         elif estado == 16:
             if re.search('#',caracterLeido):
@@ -361,6 +428,10 @@ def bAnalizarArchivo():
                 buffer = ''
                 columna+=1
                 estado = 17
+            else:
+                    buffer = caracterLeido
+                    mandarAError(buffer, fila, columna)
+                    buffer=''
             
         elif estado == 17:
             if re.search('[A-F]', caracterLeido) or re.search('[a-f]', caracterLeido) or re.search('[0-9]', caracterLeido):
@@ -372,6 +443,10 @@ def bAnalizarArchivo():
                     buffer = ''
                     codigoSex = 0
                     estado = 18
+            else:
+                    buffer = caracterLeido
+                    mandarAError(buffer, fila, columna)
+                    buffer=''   
 
         elif estado == 18:
                 if caracterLeido == ']':
@@ -380,12 +455,17 @@ def bAnalizarArchivo():
                     buffer =''
                     columna +=1
                     estado = 19
+                else:
+                    buffer = caracterLeido
+                    mandarAError(buffer, fila, columna)
+                    buffer=''
         
         elif estado == 19:
             if caracterLeido == '\s' or caracterLeido == '\t' :
                 columna+=1
             elif caracterLeido == '\n':
                 fila +=1
+                columna =1
             elif caracterLeido == ',':
                 buffer += caracterLeido
                 listaTokens.append(Token('coma', buffer, fila, columna))
@@ -398,18 +478,27 @@ def bAnalizarArchivo():
                 buffer =''
                 columna +=1
                 estado = 4
+            else:
+                    buffer = caracterLeido
+                    mandarAError(buffer, fila, columna)
+                    buffer=''
 
         elif estado == 20:
             if caracterLeido == '\s' or caracterLeido == '\t' :
                 columna+=1
             elif caracterLeido == '\n':
                 fila +=1
+                columna =1
             elif caracterLeido == '[':
                 buffer += caracterLeido
                 listaTokens.append(Token('CorcheteAbierto', buffer, fila, columna))
                 buffer =''
                 columna +=1
                 estado = 8
+            else:
+                    buffer = caracterLeido
+                    mandarAError(buffer, fila, columna)
+                    buffer=''
             
 
         elif estado == 21:
@@ -417,6 +506,7 @@ def bAnalizarArchivo():
                 columna+=1
             elif caracterLeido == '\n':
                 fila +=1
+                columna =1
             elif caracterLeido == ';':
                 buffer+=caracterLeido
                 listaTokens.append(Token('puntocoma',buffer, fila, columna))
@@ -441,12 +531,22 @@ def bAnalizarArchivo():
                     buffer=''
                     i-=1
                     estado  = 22
+                elif caracterLeido == ',':
+                    buffer += caracterLeido
+                    listaTokens.append(Token('coma', buffer, fila, columna))
+                    buffer = ''
+                    columna+=1
+                else:
+                    buffer = caracterLeido
+                    mandarAError(buffer, fila, columna)
+                    buffer=''
         
         elif estado == 22:
             if caracterLeido == '\s' or caracterLeido == '\t' :
                 columna+=1
             elif caracterLeido == '\n':
                 fila +=1
+                columna =1
             elif re.search('[A-Z]', caracterLeido):
                  buffer+=caracterLeido
                  columna+=1
@@ -466,29 +566,93 @@ def bAnalizarArchivo():
                     buffer=''
                     i-=1
                     estado  = 23
+                elif caracterLeido == ',':
+                    buffer += caracterLeido
+                    listaTokens.append(Token('coma', buffer, fila, columna))
+                    buffer = ''
+                    columna+=1
                 elif caracterLeido == ';':
                     buffer+=caracterLeido
                     listaTokens.append(Token('puntocoma',buffer, fila, columna))
                     buffer = ''
                     estado=5
+                else:
+                    buffer = caracterLeido
+                    mandarAError(buffer, fila, columna)
+                    buffer=''
     
         elif estado== 23:
             if caracterLeido == '\s' or caracterLeido == '\t' :
                 columna+=1
             elif caracterLeido == '\n':
                 fila +=1
+                columna =1
             elif caracterLeido == ';':
                 buffer+=caracterLeido
                 listaTokens.append(Token('puntocoma',buffer, fila, columna))
                 buffer = ''
+                columna+=1
                 estado=5
+            else:
+                    buffer = caracterLeido
+                    mandarAError(buffer, fila, columna)
+                    buffer=''
         i+=1
-
+    crearImagen()
     #for i in range(len(listaTokens)):
-        #print("Token: ", listaTokens[i].get_tipo())
+        #print("Token: ", listaTokens[i].get_tipo(), " Lexema: ", listaTokens[i].get_lexema(), " Fila: ", listaTokens[i].get_fila(), " Columna: ", listaTokens[i].get_columna()  )
+    
+    #for i in range(len(listaErrores)):
+        #print(listaErrores[i].get_descripcion())
 
 def bSalir():
     exit()
+
+def mandarAError(buffer,fila, columna):
+    listaErrores.append(Error('No se reconoció el caracter: '+buffer,fila,columna))
+
+def crearImagen():
+    global listaTokens
+    global listaImagenes
+    j=0
+    i=0
+    atributosCeldas=[]#[x,y,boolean,color]
+    listaCeldas=[]
+    centi = False
+    listaImagenes.append(Imagen('','','','','','',''))
+    while i< len(listaTokens):
+        token = listaTokens[i]
+        
+        if token.get_tipo() == "titulo":
+            listaImagenes[j].set_titulo(listaTokens[i+2].get_lexema())
+        elif token.get_tipo() == "ancho":
+            listaImagenes[j].set_ancho(listaTokens[i+2].get_lexema())
+        elif token.get_tipo() == "alto":
+            listaImagenes[j].set_alto(listaTokens[i+2].get_lexema())
+        elif token.get_tipo() == "filas":
+            listaImagenes[j].set_filas(listaTokens[i+2].get_lexema())
+        elif token.get_tipo() == "columnas":
+            listaImagenes[j].set_columnas(listaTokens[i+2].get_lexema())
+        elif token.get_tipo() == "llaveCerrada":
+            centi=False
+            listaImagenes[j].set_celdas(listaCeldas.copy())
+            listaCeldas.clear()
+        elif token.get_tipo() == "separador":
+            j+=1
+            listaImagenes.append(Imagen('','','','','','',''))
+        elif token.get_tipo() == "llaveAbierta" or centi== True:
+            centi = True
+            if token.get_tipo()== "entero" or token.get_tipo()=="boleano" or token.get_tipo()=="sharp" or token.get_tipo()=="codigo":
+                atributosCeldas.append(listaTokens[i].get_lexema())
+            elif token.get_tipo()=="CorcheteCerrado":
+                listaCeldas.append(atributosCeldas.copy())
+                atributosCeldas.clear()
+        
+        i+=1
+    #print("El titulo de la imagen es: ", listaImagenes[0].get_titulo(), "\n El ancho es: ", listaImagenes[0].get_ancho(), "\n El alto es: ", listaImagenes[0].get_alto(), "\n las filas son: ", listaImagenes[0].get_filas(), "\n las columnas son: ", listaImagenes[0].get_columnas()  )      
+    print("propiedades de la primera celda", listaImagenes[0].celdas[0])
+
+
 
 if __name__ == '__main__':
     crearVentanaMenu()
