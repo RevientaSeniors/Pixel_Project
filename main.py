@@ -618,6 +618,7 @@ def crearImagen():
     i=0
     atributosCeldas=[]#[x,y,boolean,color]
     listaCeldas=[]
+    listaFiltros=[]
     centi = False
     listaImagenes.append(Imagen('','','','','','',''))
     while i< len(listaTokens):
@@ -638,6 +639,8 @@ def crearImagen():
             listaImagenes[j].set_celdas(listaCeldas.copy())
             listaCeldas.clear()
         elif token.get_tipo() == "separador":
+            listaImagenes[j].set_filtros(listaFiltros.copy())
+            listaFiltros.clear()
             j+=1
             listaImagenes.append(Imagen('','','','','','',''))
         elif token.get_tipo() == "llaveAbierta" or centi== True:
@@ -647,10 +650,18 @@ def crearImagen():
             elif token.get_tipo()=="CorcheteCerrado":
                 listaCeldas.append(atributosCeldas.copy())
                 atributosCeldas.clear()
-        
+        elif token.get_tipo()== "mirrorx" or token.get_tipo()== "mirrory" or token.get_tipo()== "doublem":
+            listaFiltros.append(listaTokens[i].get_lexema())
+
         i+=1
-    #print("El titulo de la imagen es: ", listaImagenes[0].get_titulo(), "\n El ancho es: ", listaImagenes[0].get_ancho(), "\n El alto es: ", listaImagenes[0].get_alto(), "\n las filas son: ", listaImagenes[0].get_filas(), "\n las columnas son: ", listaImagenes[0].get_columnas()  )      
-    print("propiedades de la primera celda", listaImagenes[0].celdas[0])
+    #print("El titulo de la imagen es: ", listaImagenes[0].get_titulo(), "\n El ancho es: ", listaImagenes[0].get_ancho(), "\n El alto es: ", listaImagenes[0].get_alto(), "\n las filas son: ", listaImagenes[0].get_filas(), "\n las columnas son: ", listaImagenes[0].get_columnas()  ) 
+    #print("El titulo de la imagen es: ", listaImagenes[1].get_titulo(), "\n El ancho es: ", listaImagenes[1].get_ancho(), "\n El alto es: ", listaImagenes[1].get_alto(), "\n las filas son: ", listaImagenes[1].get_filas(), "\n las columnas son: ", listaImagenes[1].get_columnas()  )      
+    #print("propiedades de la primera celda", listaImagenes[0].celdas[0])
+    print("filtros de la primera imagen", listaImagenes[0].get_filtros())
+
+
+#def crearHTML():
+
 
 
 
