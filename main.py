@@ -657,13 +657,59 @@ def crearImagen():
     #print("El titulo de la imagen es: ", listaImagenes[0].get_titulo(), "\n El ancho es: ", listaImagenes[0].get_ancho(), "\n El alto es: ", listaImagenes[0].get_alto(), "\n las filas son: ", listaImagenes[0].get_filas(), "\n las columnas son: ", listaImagenes[0].get_columnas()  ) 
     #print("El titulo de la imagen es: ", listaImagenes[1].get_titulo(), "\n El ancho es: ", listaImagenes[1].get_ancho(), "\n El alto es: ", listaImagenes[1].get_alto(), "\n las filas son: ", listaImagenes[1].get_filas(), "\n las columnas son: ", listaImagenes[1].get_columnas()  )      
     #print("propiedades de la primera celda", listaImagenes[0].celdas[0])
-    print("filtros de la primera imagen", listaImagenes[0].get_filtros())
+    #print("filtros de la primera imagen", listaImagenes[0].get_filtros())
+    print(len(listaImagenes[0].get_celdas()))
+    crearHTML()
+
+def crearHTML():
+    global listaTokens
+    global listaErrores
+    global listaImagenes
+    lo = 0
+    documento = open("Informacion.html", 'w')
+    print(listaImagenes[0].get_celdas())
+    mensaje ="""
+    <!DOCTYPE html>
+        <html lang="en">
+            <head>
+                <title> INFORMACION </title>
+            </head>
+                <body>"""
+    for imagen in listaImagenes:
+        mensaje+="""
+                    <h1> IMAGEN </h1>
+                    <table class="default" border="1">
+                        <thead>
+				            <tr>
+					            <th colspan="2">""" +imagen.get_titulo()+ """</th>
+				            </tr>
+			            </thead>
+                """
+        for Y in range(0, int(imagen.get_filas())):
+            mensaje+= """
+                        <tr>"""
+            for X in range(0, int(imagen.get_columnas())):
+                color = ''
+                for celda in imagen.get_celdas():
+                    if celda[0] == str(X) and celda[1] ==str(Y) and celda[2]== "TRUE":
+                        color = str(celda[3])+str(celda[4])
 
 
-#def crearHTML():
-
-
-
+                mensaje+="""        
+                        <td style="background-color: """+color+""";">----------</td>
+                    """    
+            mensaje+="""</tr>
+                    """
+        mensaje += """
+                    </table>
+                    """
+        
+    mensaje += """       
+                </body>
+        </html>"""
+    documento.write(mensaje)
+    documento.close()
+    input("REPORTE GENERADO EN HTML CORRECTAMENTE")
 
 if __name__ == '__main__':
     crearVentanaMenu()
