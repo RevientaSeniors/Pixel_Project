@@ -346,7 +346,7 @@ def bAnalizarArchivo():
 
         elif estado == 12:
             if re.search('[0-9]',caracterLeido):
-                buffer = ''
+                buffer += caracterLeido
                 columna +=1
             elif re.search('\s',caracterLeido):
                 listaTokens.append(Token('entero', buffer, fila, columna))
@@ -600,8 +600,7 @@ def bAnalizarArchivo():
         i+=1
     crearImagen()
     #for i in range(len(listaTokens)):
-        #print("Token: ", listaTokens[i].get_tipo(), " Lexema: ", listaTokens[i].get_lexema(), " Fila: ", listaTokens[i].get_fila(), " Columna: ", listaTokens[i].get_columna()  )
-    
+    #print("Token: ", listaTokens[i].get_tipo(), " Lexema: ", listaTokens[i].get_lexema(), " Fila: ", listaTokens[i].get_fila(), " Columna: ", listaTokens[i].get_columna()  )
     #for i in range(len(listaErrores)):
         #print(listaErrores[i].get_descripcion())
 
@@ -667,7 +666,7 @@ def crearHTML():
     global listaImagenes
     lo = 0
     documento = open("Informacion.html", 'w')
-    print(listaImagenes[0].get_celdas())
+    #print(listaImagenes[0].get_celdas())
     mensaje ="""
     <!DOCTYPE html>
         <html lang="en">
@@ -678,7 +677,7 @@ def crearHTML():
     for imagen in listaImagenes:
         mensaje+="""
                     <h1> IMAGEN </h1>
-                    <table class="default" border="1">
+                    <table class="default" border="0" cellspacing="0">
                         <thead>
 				            <tr>
 					            <th colspan="2">""" +imagen.get_titulo()+ """</th>
@@ -696,7 +695,7 @@ def crearHTML():
 
 
                 mensaje+="""        
-                        <td style="background-color: """+color+""";">----------</td>
+                        <td WIDTH="50" HEIGHT="50" style="background-color: """+color+""";"></td>
                     """    
             mensaje+="""</tr>
                     """
