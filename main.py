@@ -1,12 +1,10 @@
-from os import replace
-from sre_constants import CATEGORY_UNI_LINEBREAK
 import  tkinter
-from typing import SupportsRound
 from Token import Token
 from Imagen import Imagen
 from Error import Error
 from tkinter.filedialog import askopenfilename
 import re
+import webbrowser
 #import imgkit
 
 #imgkit.from_url('http://google.com', 'out.jpg')
@@ -37,7 +35,7 @@ def crearVentanaMenu():
     botonCargarArchivo.place(x=225,y=80)
     botonAnalizarArchivo = tkinter.Button(frame, text="Analizar Archivo", command= bAnalizarArchivo)
     botonAnalizarArchivo.place(x=225, y= 120)
-    botonVerReporte = tkinter.Button(frame, text="Ver Reporte")
+    botonVerReporte = tkinter.Button(frame, text="Ver Reporte", command= bAbrirWeb)
     botonVerReporte.place(x=225, y=160)
     botonSeleccionarImagen = tkinter.Button(frame, text="Seleccionar Imagen")
     botonSeleccionarImagen.place(x=225, y=200)
@@ -87,36 +85,43 @@ def bAnalizarArchivo():
                 if buffer == 'TITULO':
                     listaTokens.append(Token('titulo',buffer, fila, columna))
                     buffer=''
+                    columna+=1
                     i-=1
                     estado  = 1
                 elif buffer == 'ANCHO':
                     listaTokens.append(Token('ancho',buffer, fila, columna))
                     buffer=''
+                    columna+=1
                     i-=1
                     estado  = 1
                 elif buffer == 'ALTO':
                     listaTokens.append(Token('alto', buffer, fila, columna))
                     buffer=''
+                    columna+=1
                     i-=1
                     estado  = 1
                 elif buffer == 'FILAS':
                     listaTokens.append(Token('filas',buffer, fila, columna))
                     buffer=''
+                    columna+=1
                     i-=1
                     estado  = 1
                 elif buffer == 'COLUMNAS':
                     listaTokens.append(Token('columnas', buffer, fila, columna))
                     buffer=''
+                    columna+=1
                     i-=1
                     estado  = 1
                 elif buffer == 'CELDAS':
                     listaTokens.append(Token('celdas',buffer, fila, columna))
                     buffer=''
+                    columna+=1
                     i-=1
                     estado  = 1
                 elif buffer == 'FILTROS':
                     listaTokens.append(Token('filtros', buffer, fila, columna))
                     buffer=''
+                    columna+=1
                     i-=1
                     estado  = 1
                 else:
@@ -666,7 +671,6 @@ def crearHTML():
     global listaImagenes
     lo = 0
     documento = open("Informacion.html", 'w')
-    #print(listaImagenes[0].get_celdas())
     mensaje ="""
     <!DOCTYPE html>
         <html lang="en">
@@ -695,20 +699,75 @@ def crearHTML():
 
 
                 mensaje+="""        
-                        <td WIDTH="50" HEIGHT="50" style="background-color: """+color+""";"></td>
+                        <td WIDTH="30" HEIGHT="30" style="background-color: """+color+""";"></td>
                     """    
             mensaje+="""</tr>
                     """
         mensaje += """
                     </table>
                     """
-        
+    mensaje+="""
+                    <h1> TOKENS </h1>
+                    <table class="default1" border="1" cellspacing="1">
+                        <thead>
+				            <tr>
+					            <th colspan="4"> TABLA DE TOKENS </th>
+				            </tr>
+			            </thead>
+                        <tr>
+                            <th> TIPO </th>
+                            <th> LEXEMA </th>
+                            <th> FILA </th>
+                            <th> COLUMNA </th>
+                        </tr>
+                """
+    for token in listaTokens:
+        mensaje += """
+                    <tr>     
+                        <td>"""+str(token.get_tipo())+""" </td>
+                        <td>"""+str(token.get_lexema())+"""</td>
+                        <td>"""+str(token.get_fila())+"""</td>
+                        <td>"""+str(token.get_columna())+"""</td> 
+                    </tr>
+                """
+    mensaje += """
+                    </table>
+                    """
+    mensaje+="""
+                    <h1> ERRORES </h1>
+                    <table class="default1" border="1" cellspacing="1">
+                        <thead>
+				            <tr>
+					            <th colspan="3"> TABLA DE ERRORES </th>
+				            </tr>
+			            </thead>
+                        <tr>
+                            <th> TIPO </th>
+                            <th> FILA </th>
+                            <th> COLUMNA </th>
+                        </tr>
+                """
+    for error in listaErrores:
+        mensaje += """
+                    <tr>     
+                        <td>"""+str(error.get_descripcion())+""" </td>
+                        <td>"""+str(error.get_fila())+"""</td>
+                        <td>"""+str(error.get_columna())+"""</td>
+                    </tr>
+                """
+    mensaje += """
+                    </table>
+                    """
     mensaje += """       
                 </body>
         </html>"""
     documento.write(mensaje)
     documento.close()
     input("REPORTE GENERADO EN HTML CORRECTAMENTE")
+
+def bAbrirWeb():
+    webbrowser.open_new_tab('Informacion.html')
+
 
 if __name__ == '__main__':
     crearVentanaMenu()
