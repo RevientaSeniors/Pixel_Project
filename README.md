@@ -5,7 +5,8 @@ Proyecto Lenguajes formales y de programación 2021
 #### Muestra una ventana emergente que permite al usuario seleccionar un archivo pxla y cargarlo a memoria.
 ### 2. Analizar archivo:
 #### Analiza el archivo cargado mediante un autómata definido e implementado por el estudiante y genera los archivos HTML tanto de la imagen original como de las imágenes con filtro. los datos obtenidos durante la ejecución del reporte.
-### 3. Ver reportes: Se debe de escribir un archivo HTML con los datos del reporte generado, la manera en que los datos son mostrados deben de ser agradables al usuario. Los reportes deben abrirse automáticamente al seleccionar esta opción.
+### 3. Ver reportes: 
+##### Se debe de escribir un archivo HTML con los datos del reporte generado, la manera en que los datos son mostrados deben de ser agradables al usuario. Los reportes deben abrirse automáticamente al seleccionar esta opción.
 #### Se debe de escribir un archivo HTML con los datos del reporte generado, la manera en que los datos son mostrados deben de ser agradables al usuario. Por lo menos, debe mostrar el nombre del curso, en una tabla la lista de estudiantes y su respectiva nota (en rojo las notas reprobadas y en azul las aprobadas) y al final los parámetros solicitados.
 ### 4.Seleccionar imagen:
 #### El programa debe contar con una lista de las imágenes analizadas en el archivo, se deberá poder seleccionar una imagen para poder visualizarla junto con los filtros aplicados en ella.
