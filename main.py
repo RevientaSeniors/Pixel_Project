@@ -604,10 +604,6 @@ def bAnalizarArchivo():
                     buffer=''
         i+=1
     crearImagen()
-    #for i in range(len(listaTokens)):
-    #print("Token: ", listaTokens[i].get_tipo(), " Lexema: ", listaTokens[i].get_lexema(), " Fila: ", listaTokens[i].get_fila(), " Columna: ", listaTokens[i].get_columna()  )
-    #for i in range(len(listaErrores)):
-        #print(listaErrores[i].get_descripcion())
 
 def bSalir():
     exit()
@@ -620,6 +616,7 @@ def crearImagen():
     global listaImagenes
     j=0
     i=0
+    finalCadena = len(listaTokens)
     atributosCeldas=[]#[x,y,boolean,color]
     listaCeldas=[]
     listaFiltros=[]
@@ -642,11 +639,12 @@ def crearImagen():
             centi=False
             listaImagenes[j].set_celdas(listaCeldas.copy())
             listaCeldas.clear()
-        elif token.get_tipo() == "separador":
+        elif token.get_tipo() == "separador" or i+1 == finalCadena:
             listaImagenes[j].set_filtros(listaFiltros.copy())
             listaFiltros.clear()
             j+=1
-            listaImagenes.append(Imagen('','','','','','',''))
+            if i+1 != finalCadena:
+                listaImagenes.append(Imagen('','','','','','',''))
         elif token.get_tipo() == "llaveAbierta" or centi== True:
             centi = True
             if token.get_tipo()== "entero" or token.get_tipo()=="boleano" or token.get_tipo()=="sharp" or token.get_tipo()=="codigo":
@@ -658,19 +656,12 @@ def crearImagen():
             listaFiltros.append(listaTokens[i].get_lexema())
 
         i+=1
-    #print("El titulo de la imagen es: ", listaImagenes[0].get_titulo(), "\n El ancho es: ", listaImagenes[0].get_ancho(), "\n El alto es: ", listaImagenes[0].get_alto(), "\n las filas son: ", listaImagenes[0].get_filas(), "\n las columnas son: ", listaImagenes[0].get_columnas()  ) 
-    #print("El titulo de la imagen es: ", listaImagenes[1].get_titulo(), "\n El ancho es: ", listaImagenes[1].get_ancho(), "\n El alto es: ", listaImagenes[1].get_alto(), "\n las filas son: ", listaImagenes[1].get_filas(), "\n las columnas son: ", listaImagenes[1].get_columnas()  )      
-    #print("propiedades de la primera celda", listaImagenes[0].celdas[0])
-    #print("filtros de la primera imagen", listaImagenes[0].get_filtros())
-    print(len(listaImagenes[0].get_celdas()))
     crearHTML()
+    crearHTMLReportes()
 
 def crearHTML():
-    global listaTokens
-    global listaErrores
     global listaImagenes
-    lo = 0
-    documento = open("Informacion.html", 'w')
+    documento = open("imagenes.html", 'w')
     mensaje ="""
     <!DOCTYPE html>
         <html lang="en">
@@ -680,7 +671,7 @@ def crearHTML():
                 <body>"""
     for imagen in listaImagenes:
         mensaje+="""
-                    <h1> IMAGEN </h1>
+                    <h1> IMAGEN ORIGINAL </h1>
                     <table class="default" border="0" cellspacing="0">
                         <thead>
 				            <tr>
@@ -688,10 +679,10 @@ def crearHTML():
 				            </tr>
 			            </thead>
                 """
-        for Y in range(0, int(imagen.get_filas())):
+        for Y in range(0,int(imagen.get_filas())):
             mensaje+= """
                         <tr>"""
-            for X in range(0, int(imagen.get_columnas())):
+            for X in range(0,int(imagen.get_columnas())):
                 color = ''
                 for celda in imagen.get_celdas():
                     if celda[0] == str(X) and celda[1] ==str(Y) and celda[2]== "TRUE":
@@ -706,6 +697,108 @@ def crearHTML():
         mensaje += """
                     </table>
                     """
+        for filtro in imagen.get_filtros():
+            if filtro == "MIRRORX":
+                mensaje+="""
+                    <h1> IMAGEN MIRRORX </h1>
+                    <table class="default" border="0" cellspacing="0">
+                        <thead>
+				            <tr>
+					            <th colspan="2">""" +imagen.get_titulo()+ """</th>
+				            </tr>
+			            </thead>
+                """
+                for Y in range(0,int(imagen.get_filas())):
+                    mensaje+= """
+                                <tr>"""
+                    for X in range(int(imagen.get_columnas())-1,-1,-1):
+                        color = ''
+                        for celda in imagen.get_celdas():
+                            if celda[0] == str(X) and celda[1] ==str(Y) and celda[2]== "TRUE":
+                                color = str(celda[3])+str(celda[4])
+
+
+                        mensaje+="""        
+                                <td WIDTH="30" HEIGHT="30" style="background-color: """+color+""";"></td>
+                            """    
+                    mensaje+="""</tr>
+                            """
+                mensaje += """
+                            </table>
+                            """
+            if filtro == "MIRRORY":
+                mensaje+="""
+                    <h1> IMAGEN MIRRORY </h1>
+                    <table class="default" border="0" cellspacing="0">
+                        <thead>
+				            <tr>
+					            <th colspan="2">""" +imagen.get_titulo()+ """</th>
+				            </tr>
+			            </thead>
+                """
+                for Y in range(int(imagen.get_filas())-1,-1,-1):
+                    mensaje+= """
+                                <tr>"""
+                    for X in range(0,int(imagen.get_columnas())):
+                        color = ''
+                        for celda in imagen.get_celdas():
+                            if celda[0] == str(X) and celda[1] ==str(Y) and celda[2]== "TRUE":
+                                color = str(celda[3])+str(celda[4])
+
+
+                        mensaje+="""        
+                                <td WIDTH="30" HEIGHT="30" style="background-color: """+color+""";"></td>
+                            """    
+                    mensaje+="""</tr>
+                            """
+                mensaje += """
+                            </table>
+                            """
+            if filtro == "DOUBLEMIRROR":
+                mensaje+="""
+                    <h1> IMAGEN DOUBLE MIRROR </h1>
+                    <table class="default" border="0" cellspacing="0">
+                        <thead>
+				            <tr>
+					            <th colspan="2">""" +imagen.get_titulo()+ """</th>
+				            </tr>
+			            </thead>
+                """
+                for Y in range(int(imagen.get_filas())-1,-1,-1):
+                    mensaje+= """
+                                <tr>"""
+                    for X in range(int(imagen.get_columnas())-1,-1,-1):
+                        color = ''
+                        for celda in imagen.get_celdas():
+                            if celda[0] == str(X) and celda[1] ==str(Y) and celda[2]== "TRUE":
+                                color = str(celda[3])+str(celda[4])
+
+
+                        mensaje+="""        
+                                <td WIDTH="30" HEIGHT="30" style="background-color: """+color+""";"></td>
+                            """    
+                    mensaje+="""</tr>
+                            """
+                mensaje += """
+                            </table>
+                            """   
+    mensaje += """       
+                </body>
+        </html>"""
+    documento.write(mensaje)
+    documento.close()
+
+def crearHTMLReportes():
+    global listaTokens
+    global listaErrores
+    documento = open("informacion.html", 'w')
+    mensaje ="""
+    <!DOCTYPE html>
+        <html lang="en">
+            <head>
+                <title> INFORMACION  </title>
+            </head>
+                <body>"""
     mensaje+="""
                     <h1> TOKENS </h1>
                     <table class="default1" border="1" cellspacing="1">
@@ -766,7 +859,8 @@ def crearHTML():
     input("REPORTE GENERADO EN HTML CORRECTAMENTE")
 
 def bAbrirWeb():
-    webbrowser.open_new_tab('Informacion.html')
+    webbrowser.open_new_tab('imagenes.html')
+    webbrowser.open_new_tab('informacion.html')
 
 
 if __name__ == '__main__':
